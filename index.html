@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NovaOps | Autonomous Real Estate & Enterprise Automation Pipelines</title>
+  <meta name="description" content="Custom n8n pipelines, autonomous AI document extraction, and sub-90-second lead qualification for real estate enterprises across Europe, the Gulf (GCC), and the Americas. Founded by Mudassar Khurshid.">
+  <meta name="author" content="Mudassar Khurshid">
+  
+  <!-- Open Graph / Meta -->
+  <meta property="og:title" content="NovaOps | Global Real Estate & Enterprise Automation">
+  <meta property="og:description" content="Autonomous n8n deal-flow pipelines, WhatsApp speed-to-lead, and AI document screening for Europe, the Gulf (GCC), and the Americas.">
+  <meta property="og:url" content="https://novaop.me">
+  <meta property="og:type" content="website">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23030712'/><path d='M30 72 L50 24 L70 72 Z' fill='none' stroke='%2338bdf8' stroke-width='8' stroke-linejoin='round'/><circle cx='50' cy='52' r='7' fill='%2338bdf8'/></svg>">
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              400: '#38bdf8',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              cyan: '#06b6d4',
+              emerald: '#10b981',
+            },
+            abyss: {
+              900: '#0a0f1d',
+              950: '#030712',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #030712; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #334155; }
+
+    /* Glassmorphic Panel System */
+    .glass-panel {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.65) 0%, rgba(3, 7, 18, 0.85) 100%);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+
+    /* Interactive Spotlight Canvas */
+    .spotlight-box {
+      position: relative;
+    }
+    .spotlight-box::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: radial-gradient(400px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(56, 189, 248, 0.35), transparent 70%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .spotlight-box:hover::before {
+      opacity: 1;
+    }
+
+    /* Node State Dynamics */
+    .node-card {
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .node-card.active-node {
+      border-color: #38bdf8 !important;
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.35), inset 0 0 15px rgba(56, 189, 248, 0.1) !important;
+      transform: translateY(-3px) scale(1.02);
+    }
+    .node-card.complete-node {
+      border-color: #10b981 !important;
+      background: rgba(16, 185, 129, 0.08) !important;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-abyss-950 text-slate-100 font-sans antialiased selection:bg-brand-400 selection:text-abyss-950 overflow-x-hidden">
+
+  <!-- Ambient Light Orbs -->
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+    <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-gradient-to-b from-blue-600/20 via-cyan-500/10 to-transparent rounded-full blur-[140px]"></div>
+    <div class="absolute top-[35%] -left-48 w-[500px] h-[500px] bg-brand-500/10 rounded-full blur-[160px]"></div>
+    <div class="absolute top-[65%] -right-48 w-[550px] h-[550px] bg-emerald-500/10 rounded-full blur-[180px]"></div>
+    <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff04_1px,transparent_1px),linear-gradient(to_bottom,#ffffff04_1px,transparent_1px)] bg-[size:3.5rem_3.5rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
+  </div>
+
+  <!-- NAVIGATION -->
+  <header class="fixed top-0 w-full z-50 transition-all duration-300 border-b border-white/[0.06] bg-abyss-950/80 backdrop-blur-2xl" id="navHeader">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <a href="#" class="flex items-center gap-3.5 group focus:outline-none">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 via-brand-500 to-cyan-400 p-[1px] shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform duration-300">
+          <div class="w-full h-full bg-abyss-950 rounded-[11px] flex items-center justify-center">
+            <i data-lucide="cpu" class="w-5 h-5 text-brand-400"></i>
+          </div>
+        </div>
+        <div class="flex flex-col">
+          <div class="flex items-center gap-2">
+            <span class="text-xl font-bold tracking-tight text-white group-hover:text-brand-400 transition-colors">NovaOps</span>
+            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-brand-500/15 text-brand-400 border border-brand-500/30">v2.4</span>
+          </div>
+          <span class="text-[10px] font-mono tracking-wider text-slate-400 uppercase">Enterprise Workflow Pipelines</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav -->
+      <nav class="hidden md:flex items-center gap-8 text-xs font-semibold tracking-wide uppercase text-slate-300 font-mono">
+        <a href="#simulator" class="hover:text-brand-400 transition-colors">Simulator</a>
+        <a href="#solutions" class="hover:text-brand-400 transition-colors">Solutions</a>
+        <a href="#calculator" class="hover:text-brand-400 transition-colors">ROI Engine</a>
+        <a href="#architecture" class="hover:text-brand-400 transition-colors">Global Architecture</a>
+        <a href="#faq" class="hover:text-brand-400 transition-colors">FAQ</a>
+      </nav>
+
+      <!-- Desktop Actions -->
+      <div class="hidden md:flex items-center gap-3.5">
+        <a href="https://wa.me/923179628727?text=Hello%20Mudassar,%20I%20would%20like%20to%20discuss%20an%20automation%20pipeline%20for%20our%20firm." 
+           target="_blank" 
+           rel="noopener noreferrer"
+           class="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 hover:border-emerald-500/50 transition-all duration-200">
+          <i data-lucide="message-circle" class="w-4 h-4"></i>
+          <span>Direct WhatsApp</span>
+        </a>
+        <a href="#contact" 
+           class="inline-flex items-center gap-2 px-5 py-2 text-xs font-bold uppercase tracking-wider rounded-lg bg-gradient-to-r from-blue-600 via-brand-500 to-cyan-500 text-white shadow-lg shadow-blue-500/25 hover:shadow-cyan-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200">
+          <span>Book Discovery</span>
+          <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+        </a>
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <button id="mobileMenuBtn" aria-label="Toggle mobile menu" class="md:hidden text-slate-400 hover:text-white p-2 focus:outline-none">
+        <i data-lucide="menu" id="iconMenuOpen" class="w-6 h-6"></i>
+        <i data-lucide="x" id="iconMenuClose" class="w-6 h-6 hidden"></i>
+      </button>
+    </div>
+
+    <!-- Mobile Drawer -->
+    <div id="mobileDrawer" class="hidden md:hidden px-6 py-6 bg-abyss-950/95 backdrop-blur-2xl border-b border-white/[0.08]">
+      <nav class="flex flex-col gap-4 text-sm font-mono uppercase text-slate-300">
+        <a href="#simulator" class="mobile-nav-link py-2 hover:text-brand-400">Live Simulator</a>
+        <a href="#solutions" class="mobile-nav-link py-2 hover:text-brand-400">Solutions</a>
+        <a href="#calculator" class="mobile-nav-link py-2 hover:text-brand-400">ROI Engine</a>
+        <a href="#architecture" class="mobile-nav-link py-2 hover:text-brand-400">Global Architecture</a>
+        <a href="#faq" class="mobile-nav-link py-2 hover:text-brand-400">FAQ</a>
+      </nav>
+      <div class="pt-6 mt-4 border-t border-slate-800 flex flex-col gap-3">
+        <a href="https://wa.me/923179628727" target="_blank" class="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-xs font-semibold">
+          <i data-lucide="message-circle" class="w-4 h-4"></i> WhatsApp Channel
+        </a>
+        <a href="#contact" class="mobile-nav-link w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-blue-600 text-white text-xs font-bold uppercase tracking-wider">
+          Book Architecture Call <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="relative z-10 pt-20">
+
+    <!-- HERO SECTION -->
+    <section class="max-w-7xl mx-auto px-6 pt-16 pb-20 lg:pt-28 lg:pb-32 text-center relative">
+      <!-- Coverage Pill -->
+      <div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-brand-500/30 bg-brand-500/10 text-brand-400 text-xs font-mono mb-8 shadow-inner shadow-brand-500/10">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span>Serving Europe &bull; The Gulf (GCC) &bull; North America</span>
+      </div>
+
+      <!-- Main Headline -->
+      <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-[-0.035em] text-white leading-[1.08] max-w-5xl mx-auto">
+        Automate High-Stakes Deal Flow &amp; Inbound Leads in
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-300 to-emerald-400">
+          Under 90 Seconds.
+        </span>
+      </h1>
+
+      <!-- Executive Subhead -->
+      <p class="mt-8 text-base sm:text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed font-normal">
+        NovaOps designs enterprise <strong class="text-white font-semibold">n8n automation pipelines</strong> for high-volume brokerages, commercial developers, and institutional asset managers. Eliminate manual document screening, qualify investor solvency across international portals, and schedule viewings with zero friction.
+      </p>
+
+      <!-- Primary Action Row -->
+      <div class="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto sm:max-w-none">
+        <a href="#contact" 
+           class="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-blue-600 via-brand-500 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold text-xs uppercase tracking-wider shadow-xl shadow-blue-500/25 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3">
+          <span>Request Pipeline Architecture</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </a>
+        <a href="#simulator" 
+           class="w-full sm:w-auto px-8 py-4 rounded-xl border border-white/[0.1] bg-surface-900/60 hover:bg-slate-800 text-slate-300 hover:text-white font-semibold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2.5">
+          <i data-lucide="play" class="w-4 h-4 text-brand-400"></i>
+          <span>Launch Simulator</span>
+        </a>
+      </div>
+
+      <!-- Real-Time Metrics Strip -->
+      <div class="mt-20 grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-5xl mx-auto pt-12 border-t border-white/[0.08]">
+        <div class="glass-panel p-5 rounded-2xl">
+          <div class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight flex items-center justify-center font-mono">
+            <span>&lt;</span><span class="counter" data-target="90">0</span><span>s</span>
+          </div>
+          <p class="text-[11px] font-mono uppercase tracking-wider text-slate-400 mt-1.5">Speed to Lead Intake</p>
+        </div>
+        <div class="glass-panel p-5 rounded-2xl">
+          <div class="text-3xl sm:text-4xl font-extrabold text-brand-400 tracking-tight flex items-center justify-center font-mono">
+            <span class="counter" data-target="100">0</span><span>%</span>
+          </div>
+          <p class="text-[11px] font-mono uppercase tracking-wider text-slate-400 mt-1.5">Global Zero Data Retention</p>
+        </div>
+        <div class="glass-panel p-5 rounded-2xl">
+          <div class="text-3xl sm:text-4xl font-extrabold text-emerald-400 tracking-tight flex items-center justify-center font-mono">
+            <span class="counter" data-target="85">0</span><span>%</span>
+          </div>
+          <p class="text-[11px] font-mono uppercase tracking-wider text-slate-400 mt-1.5">Manual Review Hours Cut</p>
+        </div>
+        <div class="glass-panel p-5 rounded-2xl">
+          <div class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight flex items-center justify-center font-mono">
+            <span>$</span><span class="counter" data-target="52">0</span><span>k+</span>
+          </div>
+          <p class="text-[11px] font-mono uppercase tracking-wider text-slate-400 mt-1.5">Avg. Payroll Reclaimed</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- LIVE PIPELINE SIMULATOR -->
+    <section id="simulator" class="py-24 px-6 bg-abyss-900/60 border-y border-white/[0.08] relative">
+      <div class="max-w-6xl mx-auto">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs font-mono mb-3">
+              <i data-lucide="terminal" class="w-3.5 h-3.5"></i>
+              <span>Live Architecture Engine</span>
+            </div>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Interactive Pipeline Sandbox</h2>
+            <p class="text-slate-400 text-sm sm:text-base mt-2 max-w-xl">
+              Choose an operational scenario below to execute an autonomous n8n cycle and inspect the structured telemetry in real time.
+            </p>
+          </div>
+          <!-- Execution Selectors -->
+          <div class="flex flex-wrap items-center gap-3">
+            <button id="btnRunRes" class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-mono text-xs font-semibold flex items-center gap-2 shadow-lg shadow-blue-500/20 transition-all active:scale-95">
+              <i data-lucide="message-square" class="w-4 h-4"></i> Run Speed-to-Lead (Europe / Gulf)
+            </button>
+            <button id="btnRunComm" class="px-4 py-2.5 rounded-xl border border-white/[0.1] bg-abyss-950 hover:bg-slate-800 text-slate-300 hover:text-white font-mono text-xs font-semibold flex items-center gap-2 transition-all active:scale-95">
+              <i data-lucide="building-2" class="w-4 h-4"></i> Run Institutional Dossier (Global)
+            </button>
+          </div>
+        </div>
+
+        <!-- Simulator Canvas -->
+        <div class="glass-panel rounded-3xl p-6 sm:p-10 relative overflow-hidden">
+          
+          <!-- Node Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4 relative z-10">
+            <!-- Node 1 -->
+            <div id="simNode1" class="node-card glass-panel rounded-2xl p-5 border border-white/[0.08]">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] text-slate-400">Node 01</span>
+                <span id="badgeNode1" class="text-[10px] font-mono text-slate-500 font-bold">READY</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-brand-400 flex items-center justify-center shrink-0">
+                  <i data-lucide="webhook" class="w-5 h-5"></i>
+                </div>
+                <div class="min-w-0">
+                  <h4 class="text-sm font-bold text-white truncate" id="titleNode1">Inbound Capture</h4>
+                  <p class="text-[11px] text-slate-400 font-mono truncate" id="subNode1">Portal Webhook / IMAP</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Node 2 -->
+            <div id="simNode2" class="node-card glass-panel rounded-2xl p-5 border border-white/[0.08]">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] text-slate-400">Node 02</span>
+                <span id="badgeNode2" class="text-[10px] font-mono text-slate-500 font-bold">READY</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center shrink-0">
+                  <i data-lucide="brain-circuit" class="w-5 h-5"></i>
+                </div>
+                <div class="min-w-0">
+                  <h4 class="text-sm font-bold text-white truncate" id="titleNode2">AI Parsing Model</h4>
+                  <p class="text-[11px] text-slate-400 font-mono truncate" id="subNode2">OCR &amp; Extraction</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Node 3 -->
+            <div id="simNode3" class="node-card glass-panel rounded-2xl p-5 border border-white/[0.08]">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] text-slate-400">Node 03</span>
+                <span id="badgeNode3" class="text-[10px] font-mono text-slate-500 font-bold">READY</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0">
+                  <i data-lucide="git-fork" class="w-5 h-5"></i>
+                </div>
+                <div class="min-w-0">
+                  <h4 class="text-sm font-bold text-white truncate" id="titleNode3">Criteria Gate</h4>
+                  <p class="text-[11px] text-slate-400 font-mono truncate" id="subNode3">Validation Logic</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Node 4 -->
+            <div id="simNode4" class="node-card glass-panel rounded-2xl p-5 border border-white/[0.08]">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] text-slate-400">Node 04</span>
+                <span id="badgeNode4" class="text-[10px] font-mono text-slate-500 font-bold">READY</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
+                  <i data-lucide="calendar-check" class="w-5 h-5"></i>
+                </div>
+                <div class="min-w-0">
+                  <h4 class="text-sm font-bold text-white truncate" id="titleNode4">Dispatch &amp; Sync</h4>
+                  <p class="text-[11px] text-slate-400 font-mono truncate" id="subNode4">WhatsApp &amp; CRM Sync</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Console Telemetry Output -->
+          <div class="mt-8 rounded-2xl bg-abyss-950 border border-white/[0.08] p-5 font-mono text-xs relative overflow-hidden">
+            <div class="flex items-center justify-between pb-3 border-b border-white/[0.08] mb-3 text-[11px]">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
+                <span class="text-slate-300 font-semibold uppercase">n8n Execution Stream</span>
+              </div>
+              <span id="simExecutionTimer" class="text-slate-500">Cycle Time: 0.00s</span>
+            </div>
+            <pre id="simConsole" class="h-40 overflow-y-auto whitespace-pre-wrap leading-relaxed text-slate-400 text-[11px] select-text">Ready. Choose a scenario above to test the cross-border ingestion pipeline...</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CORE ARCHITECTURE BENTO GRID -->
+    <section id="solutions" class="py-28 px-6 max-w-7xl mx-auto">
+      <div class="text-center max-w-3xl mx-auto mb-20">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-blue-500/10 text-brand-400 border border-blue-500/20 text-xs font-mono mb-3">
+          <span>Engineered Precision</span>
+        </div>
+        <h2 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">Mission-Critical Pipelines Across Markets</h2>
+        <p class="text-slate-400 mt-4 text-base sm:text-lg">
+          Whether you manage high-velocity off-plan buyer inquiries in Dubai, luxury viewings in London and Berlin, or commercial pro-formas in New York, our architectures eliminate operational bottlenecks.
+        </p>
+      </div>
+
+      <!-- Bento Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Bento 1: Institutional Dossier & Off-Plan Parser (Span 7) -->
+        <div class="lg:col-span-7 glass-panel spotlight-box p-8 sm:p-10 rounded-3xl flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-6">
+              <div class="w-12 h-12 rounded-2xl bg-blue-500/10 text-brand-400 border border-blue-500/20 flex items-center justify-center">
+                <i data-lucide="file-search" class="w-6 h-6"></i>
+              </div>
+              <span class="text-xs font-mono uppercase tracking-wider px-3 py-1 rounded-full bg-white/[0.05] text-slate-400 border border-white/[0.08]">Institutional &bull; Developers</span>
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-3">Autonomous PDF Dossier &amp; Off-Plan Screening</h3>
+            <p class="text-slate-400 text-sm leading-relaxed mb-6">
+              Ingests complex architectural files, development proposals, and master plans. Extracts Gross Floor Area (<strong class="text-slate-200">GFA / BGF</strong>), zoning permits, cap rate benchmarks, and payment milestone terms before generating an executive investment brief.
+            </p>
+
+            <!-- Embedded Code Preview Mock -->
+            <div class="rounded-xl bg-abyss-950/90 border border-white/[0.08] p-4 font-mono text-[11px] text-slate-300 mb-6">
+              <div class="flex items-center justify-between pb-2 mb-2 border-b border-white/[0.06] text-[10px] text-slate-500">
+                <span>PROJECT_EXTRACTION.json</span>
+                <span class="text-emerald-400">Validated</span>
+              </div>
+              <p class="text-cyan-400">"asset_class": <span class="text-white">"Mixed-Use High-Rise / Development"</span>,</p>
+              <p class="text-cyan-400">"metrics": { <span class="text-slate-400">"gfa_sqm":</span> <span class="text-emerald-400">12400</span>, <span class="text-slate-400">"projected_yield":</span> <span class="text-emerald-400">"7.8%"</span> },</p>
+              <p class="text-cyan-400">"payment_schedule": <span class="text-white">"60/40 Construction-Linked"</span>,</p>
+              <p class="text-cyan-400">"underwrite_status": <span class="text-emerald-400">"CRITERIA_APPROVED"</span></p>
+            </div>
+          </div>
+          <div class="pt-4 border-t border-white/[0.08] flex items-center justify-between text-xs text-slate-400 font-mono">
+            <span>Applicable: Europe, Gulf Off-Plan, US Commercial</span>
+            <span class="text-brand-400">Zero Data Retention</span>
+          </div>
+        </div>
+
+        <!-- Bento 2: Speed-to-Lead Timeline (Span 5) -->
+        <div class="lg:col-span-5 glass-panel spotlight-box p-8 sm:p-10 rounded-3xl flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-6">
+              <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center">
+                <i data-lucide="zap" class="w-6 h-6"></i>
+              </div>
+              <span class="text-xs font-mono uppercase tracking-wider px-3 py-1 rounded-full bg-white/[0.05] text-slate-400 border border-white/[0.08]">High-Velocity Inflow</span>
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-3">Sub-90s Multi-Portal Lead Triage</h3>
+            <p class="text-slate-400 text-sm leading-relaxed mb-6">
+              Captures inquiries from <strong class="text-slate-200">Property Finder, Bayut, Rightmove, ImmoScout24, or Zillow</strong>. Instantly initiates qualification via WhatsApp and email, verifying purchasing power and scheduling consultations on autopilot.
+            </p>
+
+            <!-- Visual Timeline Comparison -->
+            <div class="space-y-4 mb-6 text-xs font-mono">
+              <div class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300">
+                <div class="flex justify-between font-bold mb-1">
+                  <span>Standard Industry Response</span>
+                  <span>4+ Hours</span>
+                </div>
+                <p class="text-[10px] text-rose-400/80">Investor contacts competitor &bull; Lead goes cold</p>
+              </div>
+              <div class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300">
+                <div class="flex justify-between font-bold mb-1">
+                  <span>NovaOps Automated Intake</span>
+                  <span>72 Seconds</span>
+                </div>
+                <p class="text-[10px] text-emerald-400/80">Verified on WhatsApp &bull; Calendar slot locked</p>
+              </div>
+            </div>
+          </div>
+          <div class="pt-4 border-t border-white/[0.08] text-xs text-slate-400 font-mono">
+            <span>Critical for European &amp; Gulf Brokerages</span>
+          </div>
+        </div>
+
+        <!-- Bento 3: Global Integration Ecosystem (Span 12) -->
+        <div class="lg:col-span-12 glass-panel spotlight-box p-8 sm:p-10 rounded-3xl">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+            <div>
+              <span class="text-xs font-mono uppercase text-purple-400 tracking-wider">Universal Pipeline Architecture</span>
+              <h3 class="text-2xl font-bold text-white mt-1 mb-3">Unified CRM &amp; Multi-Channel Sync</h3>
+              <p class="text-slate-400 text-sm leading-relaxed">
+                Seamless synchronization with international property management systems, enterprise CRMs, and communication protocols with zero data fragmentation.
+              </p>
+            </div>
+            <!-- Integrations Badges -->
+            <div class="md:col-span-2 grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <div class="p-3.5 rounded-xl bg-abyss-950 border border-white/[0.08] flex items-center gap-3">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+                <span class="text-xs font-semibold text-slate-200">HubSpot &amp; Salesforce</span>
+              </div>
+              <div class="p-3.5 rounded-xl bg-abyss-950 border border-white/[0.08] flex items-center gap-3">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+                <span class="text-xs font-semibold text-slate-200">onOffice &amp; Reapit</span>
+              </div>
+              <div class="p-3.5 rounded-xl bg-abyss-950 border border-white/[0.08] flex items-center gap-3">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+                <span class="text-xs font-semibold text-slate-200">WhatsApp Business Cloud</span>
+              </div>
+              <div class="p-3.5 rounded-xl bg-abyss-950 border border-white/[0.08] flex items-center gap-3">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+                <span class="text-xs font-semibold text-slate-200">Property Finder &amp; Bayut</span>
+              </div>
+              <div class="p-3.5 rounded-xl bg-abyss-950 border border-white/[0.08] flex items-center gap-3">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+                <span class="text-xs font-semibold text-slate-200">ImmoScout &amp; Rightmove</span>
+              </div>
+              <div class="p-3.5 rounded-xl bg-abyss-950 border border-white/[0.08] flex items-center gap-3">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+                <span class="text-xs font-semibold text-slate-200">Telegram &amp; Slack Ops</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- DYNAMIC ROI & PAYROLL CALCULATOR (MULTI-CURRENCY) -->
+    <section id="calculator" class="py-24 px-6 bg-abyss-900/60 border-y border-white/[0.08]">
+      <div class="max-w-5xl mx-auto">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-mono mb-3">
+            <i data-lucide="calculator" class="w-3.5 h-3.5"></i>
+            <span>Interactive Financial Model</span>
+          </div>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Calculate Reclaimed Capital</h2>
+          <p class="text-slate-400 mt-3 text-sm sm:text-base">
+            Quantify the hours and payroll capital your team burns manually qualifying leads and reviewing property dossiers each month.
+          </p>
+
+          <!-- Currency Selector -->
+          <div class="mt-6 inline-flex p-1 rounded-xl bg-abyss-950 border border-white/[0.08] text-xs font-mono">
+            <button id="currEUR" class="curr-btn px-4 py-1.5 rounded-lg font-bold bg-brand-500 text-white transition-all">EUR (€)</button>
+            <button id="currUSD" class="curr-btn px-4 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all">USD ($)</button>
+            <button id="currAED" class="curr-btn px-4 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all">AED (د.إ)</button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center glass-panel rounded-3xl p-6 sm:p-12">
+          <!-- Controls (Left) -->
+          <div class="lg:col-span-7 space-y-8">
+            <!-- Slider 1 -->
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <label for="rangeInquiries" class="text-sm font-semibold text-slate-200">Monthly Inquiries / Dossiers</label>
+                <span id="lblInquiries" class="font-mono text-brand-400 font-bold text-base">150</span>
+              </div>
+              <input type="range" id="rangeInquiries" min="20" max="600" step="10" value="150" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-brand-400">
+              <div class="flex justify-between text-[10px] text-slate-500 mt-1 font-mono">
+                <span>20 files</span>
+                <span>300 files</span>
+                <span>600+ files</span>
+              </div>
+            </div>
+
+            <!-- Slider 2 -->
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <label for="rangeTime" class="text-sm font-semibold text-slate-200">Minutes Spent Per File</label>
+                <span id="lblTime" class="font-mono text-brand-400 font-bold text-base">25 min</span>
+              </div>
+              <input type="range" id="rangeTime" min="10" max="60" step="5" value="25" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-brand-400">
+              <div class="flex justify-between text-[10px] text-slate-500 mt-1 font-mono">
+                <span>10 min (quick intake)</span>
+                <span>35 min</span>
+                <span>60 min (deep underwriting)</span>
+              </div>
+            </div>
+
+            <!-- Slider 3 -->
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <label for="rangeRate" class="text-sm font-semibold text-slate-200">Hourly Staff / Broker Cost</label>
+                <span id="lblRate" class="font-mono text-brand-400 font-bold text-base">€50 / hr</span>
+              </div>
+              <input type="range" id="rangeRate" min="20" max="150" step="5" value="50" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-brand-400">
+              <div class="flex justify-between text-[10px] text-slate-500 mt-1 font-mono">
+                <span>Junior Analyst</span>
+                <span>Mid-Level Broker</span>
+                <span>Partner / Senior</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dynamic Output Card (Right) -->
+          <div class="lg:col-span-5 bg-gradient-to-br from-abyss-950 to-slate-900 border border-white/[0.1] rounded-2xl p-6 sm:p-8 flex flex-col justify-between text-center relative overflow-hidden shadow-2xl">
+            <div>
+              <span class="text-[11px] font-mono tracking-wider text-slate-400 uppercase">Estimated Monthly Savings</span>
+              <div class="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-200 to-emerald-400 mt-3 font-mono" id="outEuros">
+                €3,125
+              </div>
+              <p class="text-xs text-slate-400 mt-1.5">Recovered agency capital every month</p>
+            </div>
+
+            <div class="my-6 pt-6 border-t border-white/[0.08] grid grid-cols-2 gap-4 text-left">
+              <div>
+                <p class="text-[10px] font-mono text-slate-500 uppercase">Hours Reclaimed</p>
+                <p class="text-xl font-bold text-white mt-1 font-mono" id="outHours">62.5 hrs</p>
+                <p class="text-[10px] text-slate-500">Per month</p>
+              </div>
+              <div>
+                <p class="text-[10px] font-mono text-slate-500 uppercase">Speed to Lead</p>
+                <p class="text-xl font-bold text-emerald-400 mt-1 font-mono">&lt; 90 sec</p>
+                <p class="text-[10px] text-slate-500">Autonomous intake</p>
+              </div>
+            </div>
+
+            <a href="#contact" class="w-full py-3.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-blue-500/25">
+              Eliminate This Waste
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ARCHITECTURE & SECURITY SPECIFICATIONS -->
+    <section id="architecture" class="py-28 px-6 max-w-7xl mx-auto">
+      <div class="max-w-3xl mx-auto text-center mb-16">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-purple-500/10 text-purple-400 border border-purple-500/20 text-xs font-mono mb-3">
+          <span>Enterprise Standards</span>
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Enterprise Infrastructure &amp; Security</h2>
+        <p class="text-slate-400 mt-3 text-sm sm:text-base">
+          Built for the rigorous data privacy demands of institutional capital across the European Union, the GCC, and North America.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="glass-panel p-6 rounded-2xl">
+          <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-brand-400 flex items-center justify-center mb-4">
+            <i data-lucide="shield-check" class="w-5 h-5"></i>
+          </div>
+          <h4 class="text-base font-bold text-white mb-2">GDPR &amp; GCC Compliance</h4>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Zero model training on confidential deal pro-formas, investor IDs, or contracts. Compliant with EU GDPR and UAE Data Protection laws.
+          </p>
+        </div>
+
+        <div class="glass-panel p-6 rounded-2xl">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-4">
+            <i data-lucide="server" class="w-5 h-5"></i>
+          </div>
+          <h4 class="text-base font-bold text-white mb-2">Regional Cloud or Self-Hosted</h4>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Pipelines deployable to isolated European VPCs (Frankfurt), Middle Eastern data centers, or your private cloud architecture.
+          </p>
+        </div>
+
+        <div class="glass-panel p-6 rounded-2xl">
+          <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center mb-4">
+            <i data-lucide="clock" class="w-5 h-5"></i>
+          </div>
+          <h4 class="text-base font-bold text-white mb-2">Rapid 21-Day Turnaround</h4>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Fully implemented production architecture in 2 to 3 weeks, accompanied by staff video documentation and continuous fail-safe testing.
+          </p>
+        </div>
+
+        <div class="glass-panel p-6 rounded-2xl">
+          <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center mb-4">
+            <i data-lucide="headphones" class="w-5 h-5"></i>
+          </div>
+          <h4 class="text-base font-bold text-white mb-2">Dedicated Retainer SLA</h4>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Ongoing prompt tuning, schema monitoring, and priority engineering support as portal layouts and broker formats evolve.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ ACCORDION -->
+    <section id="faq" class="py-24 px-6 bg-abyss-900/60 border-y border-white/[0.08]">
+      <div class="max-w-4xl mx-auto">
+        <div class="text-center mb-16">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs font-mono mb-3">
+            <span>Direct Answers</span>
+          </div>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Frequently Asked Questions</h2>
+        </div>
+
+        <div class="space-y-4">
+          <!-- Item 1 -->
+          <div class="faq-card glass-panel rounded-2xl overflow-hidden transition-all">
+            <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between gap-4 focus:outline-none">
+              <span class="text-sm sm:text-base font-bold text-white">Why custom n8n pipelines instead of shared platforms like Zapier?</span>
+              <i data-lucide="chevron-down" class="faq-arrow w-5 h-5 text-slate-400 transition-transform duration-300"></i>
+            </button>
+            <div class="faq-answer hidden px-6 pb-6 text-xs sm:text-sm text-slate-400 leading-relaxed border-t border-white/[0.06] pt-4">
+              Zapier and Make impose heavy per-task pricing on high-volume document pipelines and store data on multi-tenant US servers. With custom n8n, your firm owns 100% of the workflow IP, retains complete data sovereignty, and operates without restrictive per-lead software fees.
+            </div>
+          </div>
+
+          <!-- Item 2 -->
+          <div class="faq-card glass-panel rounded-2xl overflow-hidden transition-all">
+            <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between gap-4 focus:outline-none">
+              <span class="text-sm sm:text-base font-bold text-white">How is data confidentiality handled for off-market and institutional deals?</span>
+              <i data-lucide="chevron-down" class="faq-arrow w-5 h-5 text-slate-400 transition-transform duration-300"></i>
+            </button>
+            <div class="faq-answer hidden px-6 pb-6 text-xs sm:text-sm text-slate-400 leading-relaxed border-t border-white/[0.06] pt-4">
+              All LLM extraction runs through enterprise zero-retention endpoints. Proprietary development pro-formas, investor net-worth declarations, and transaction figures are never cached, stored, or utilized for model training.
+            </div>
+          </div>
+
+          <!-- Item 3 -->
+          <div class="faq-card glass-panel rounded-2xl overflow-hidden transition-all">
+            <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between gap-4 focus:outline-none">
+              <span class="text-sm sm:text-base font-bold text-white">What are your typical implementation fees and retainers?</span>
+              <i data-lucide="chevron-down" class="faq-arrow w-5 h-5 text-slate-400 transition-transform duration-300"></i>
+            </button>
+            <div class="faq-answer hidden px-6 pb-6 text-xs sm:text-sm text-slate-400 leading-relaxed border-t border-white/[0.06] pt-4">
+              Full enterprise deployments typically range from $1,800 to $4,500 (€1,500 – €4,000 / AED 7,000 – AED 16,500) as a one-time build fee under a 50/50 milestone agreement. Monthly retainers for infrastructure maintenance and priority engineering SLAs range from $400 to $1,000 / month.
+            </div>
+          </div>
+
+          <!-- Item 4 -->
+          <div class="faq-card glass-panel rounded-2xl overflow-hidden transition-all">
+            <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between gap-4 focus:outline-none">
+              <span class="text-sm sm:text-base font-bold text-white">Can the system qualify international buyers across time zones?</span>
+              <i data-lucide="chevron-down" class="faq-arrow w-5 h-5 text-slate-400 transition-transform duration-300"></i>
+            </button>
+            <div class="faq-answer hidden px-6 pb-6 text-xs sm:text-sm text-slate-400 leading-relaxed border-t border-white/[0.06] pt-4">
+              Yes. Pipelines operate 24/7/365. Whether an overseas investor inquires at 2:00 AM from London, Dubai, or Singapore, the automated intake engages them in under 90 seconds, confirms their budget parameters, and secures their meeting slot.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT & DIRECT DISCOVERY SECTION -->
+    <section id="contact" class="py-28 px-6 max-w-4xl mx-auto">
+      <div class="glass-panel rounded-3xl p-8 sm:p-14 shadow-2xl relative overflow-hidden border border-white/[0.1]">
+        <div class="text-center max-w-2xl mx-auto mb-10">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-brand-400 border border-blue-500/20 text-xs font-mono mb-4">
+            <i data-lucide="calendar" class="w-3.5 h-3.5"></i> Direct Technical Discovery
+          </div>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Evaluate Your Pipeline Potential</h2>
+          <p class="text-slate-400 mt-2 text-sm sm:text-base">
+            Reach out directly to <strong class="text-white">Mudassar Khurshid</strong>. We will review your current intake bottleneck and provide a technical architecture proposal within 24 hours.
+          </p>
+        </div>
+
+        <form id="contactForm" class="space-y-4 max-w-xl mx-auto">
+          <div>
+            <label class="block text-xs font-mono uppercase text-slate-400 mb-1.5" for="fName">Full Name &amp; Title</label>
+            <input type="text" id="fName" required placeholder="e.g. Marcus Vance, Managing Partner" class="w-full px-4 py-3 rounded-xl bg-abyss-950 border border-white/[0.1] text-white placeholder-slate-600 text-sm focus:border-brand-400 focus:outline-none transition-colors">
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-mono uppercase text-slate-400 mb-1.5" for="fEmail">Work Email</label>
+              <input type="email" id="fEmail" required placeholder="name@company.com" class="w-full px-4 py-3 rounded-xl bg-abyss-950 border border-white/[0.1] text-white placeholder-slate-600 text-sm focus:border-brand-400 focus:outline-none transition-colors">
+            </div>
+            <div>
+              <label class="block text-xs font-mono uppercase text-slate-400 mb-1.5" for="fRegion">Region / Pipeline Focus</label>
+              <select id="fRegion" class="w-full px-4 py-3 rounded-xl bg-abyss-950 border border-white/[0.1] text-white text-sm focus:border-brand-400 focus:outline-none transition-colors">
+                <option value="Europe - Residential Lead Qualification">Europe: Speed-to-Lead &amp; Viewings</option>
+                <option value="Europe - Commercial Exposé Screening">Europe: Commercial Exposé Screening</option>
+                <option value="Gulf / GCC - Off-Plan & WhatsApp Lead Intake">Gulf (UAE/KSA): Off-Plan &amp; WhatsApp Lead Intake</option>
+                <option value="Americas - Commercial Underwriting Pipeline">Americas: Commercial Underwriting Pipeline</option>
+                <option value="Custom Enterprise Automation">Global: Custom Enterprise Pipeline</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-mono uppercase text-slate-400 mb-1.5" for="fMessage">Brief Context on Your Workflow</label>
+            <textarea id="fMessage" rows="3" placeholder="Tell us how many inquiries or dossiers your team handles each week..." class="w-full px-4 py-3 rounded-xl bg-abyss-950 border border-white/[0.1] text-white placeholder-slate-600 text-sm focus:border-brand-400 focus:outline-none transition-colors"></textarea>
+          </div>
+
+          <div class="pt-2">
+            <button type="submit" class="w-full py-4 rounded-xl bg-gradient-to-r from-blue-600 via-brand-500 to-cyan-500 hover:opacity-95 text-white font-bold text-xs uppercase tracking-wider shadow-xl shadow-blue-500/25 transition-all flex items-center justify-center gap-2">
+              <i data-lucide="send" class="w-4 h-4"></i> Submit Inquiry to Mudassar
+            </button>
+          </div>
+        </form>
+
+        <div id="contactSuccess" class="hidden mt-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-center text-xs font-mono">
+          Inquiry prepared! Launching your email client... (Or message directly on WhatsApp below)
+        </div>
+
+        <div class="mt-10 pt-8 border-t border-white/[0.08] flex flex-wrap items-center justify-center gap-6 text-xs text-slate-400 font-mono">
+          <a href="mailto:mudassar@novaop.me" class="flex items-center gap-2 hover:text-brand-400 transition-colors">
+            <i data-lucide="mail" class="w-4 h-4 text-brand-400"></i>
+            <span>mudassar@novaop.me</span>
+          </a>
+          <span class="text-slate-700">&bull;</span>
+          <a href="https://wa.me/923179628727" target="_blank" class="flex items-center gap-2 hover:text-emerald-400 transition-colors">
+            <i data-lucide="message-circle" class="w-4 h-4 text-emerald-400"></i>
+            <span>Direct WhatsApp Channel</span>
+          </a>
+          <span class="text-slate-700">&bull;</span>
+          <span class="flex items-center gap-1.5 text-slate-500">
+            <i data-lucide="globe" class="w-3.5 h-3.5"></i>
+            <span>Europe &bull; Gulf (GCC) &bull; Americas</span>
+          </span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="py-12 border-t border-white/[0.08] bg-abyss-950 px-6 text-xs text-slate-500 font-mono">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-3">
+        <div class="w-6 h-6 rounded-lg bg-blue-600/20 text-brand-400 flex items-center justify-center font-bold">⚡</div>
+        <p>&copy; 2026 NovaOps. Founded by Mudassar Khurshid. All rights reserved.</p>
+      </div>
+      <div class="flex items-center gap-6">
+        <a href="#simulator" class="hover:text-slate-300 transition-colors">Simulator</a>
+        <a href="#solutions" class="hover:text-slate-300 transition-colors">Solutions</a>
+        <a href="#calculator" class="hover:text-slate-300 transition-colors">ROI Engine</a>
+        <a href="mailto:mudassar@novaop.me" class="hover:text-slate-300 transition-colors">mudassar@novaop.me</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- FLOATING QUICK WHATSAPP BUTTON -->
+  <div class="fixed bottom-6 right-6 z-40">
+    <a href="https://wa.me/923179628727?text=Hello%20Mudassar,%20I%20have%20a%20question%20regarding%20NovaOps%20automations." 
+       target="_blank" 
+       rel="noopener noreferrer"
+       class="flex items-center gap-2.5 px-4 py-3 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-2xl shadow-emerald-500/30 hover:scale-105 active:scale-95 transition-all">
+      <i data-lucide="message-circle" class="w-4 h-4"></i>
+      <span class="hidden sm:inline font-mono">Chat with Founder</span>
+    </a>
+  </div>
+
+  <!-- SCRIPT LOGIC -->
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Mobile Menu Toggle
+    const mobileBtn = document.getElementById('mobileMenuBtn');
+    const mobileDrawer = document.getElementById('mobileDrawer');
+    const iconOpen = document.getElementById('iconMenuOpen');
+    const iconClose = document.getElementById('iconMenuClose');
+
+    mobileBtn.addEventListener('click', () => {
+      const isClosed = mobileDrawer.classList.contains('hidden');
+      if (isClosed) {
+        mobileDrawer.classList.remove('hidden');
+        iconOpen.classList.add('hidden');
+        iconClose.classList.remove('hidden');
+      } else {
+        mobileDrawer.classList.add('hidden');
+        iconOpen.classList.remove('hidden');
+        iconClose.classList.add('hidden');
+      }
+    });
+
+    document.querySelectorAll('.mobile-nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileDrawer.classList.add('hidden');
+        iconOpen.classList.remove('hidden');
+        iconClose.classList.add('hidden');
+      });
+    });
+
+    // Spotlight cursor tracking on cards
+    document.querySelectorAll('.spotlight-box').forEach(box => {
+      box.addEventListener('mousemove', e => {
+        const rect = box.getBoundingClientRect();
+        box.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+        box.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+      });
+    });
+
+    // Animated Statistics Counter with Intersection Observer
+    const numObserver = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          const target = +el.getAttribute('data-target');
+          let current = 0;
+          const step = target / 30;
+          const timer = setInterval(() => {
+            current += step;
+            if (current >= target) {
+              el.innerText = target;
+              clearInterval(timer);
+            } else {
+              el.innerText = Math.ceil(current);
+            }
+          }, 30);
+          obs.unobserve(el);
+        }
+      });
+    }, { threshold: 0.6 });
+
+    document.querySelectorAll('.counter').forEach(c => numObserver.observe(c));
+
+    // Dynamic Multi-Currency ROI Calculator Logic
+    let currentCurrency = 'EUR';
+    const currencySymbols = { EUR: '€', USD: '$', AED: 'AED ' };
+
+    const rangeInquiries = document.getElementById('rangeInquiries');
+    const rangeTime = document.getElementById('rangeTime');
+    const rangeRate = document.getElementById('rangeRate');
+
+    const lblInquiries = document.getElementById('lblInquiries');
+    const lblTime = document.getElementById('lblTime');
+    const lblRate = document.getElementById('lblRate');
+
+    const outEuros = document.getElementById('outEuros');
+    const outHours = document.getElementById('outHours');
+
+    function calculateROI() {
+      const inq = parseInt(rangeInquiries.value);
+      const min = parseInt(rangeTime.value);
+      const rate = parseInt(rangeRate.value);
+      const symbol = currencySymbols[currentCurrency];
+
+      lblInquiries.textContent = inq;
+      lblTime.textContent = `${min} min`;
+      lblRate.textContent = `${symbol}${rate} / hr`;
+
+      const monthlyHoursSpent = (inq * min) / 60;
+      const hoursEliminated = monthlyHoursSpent * 0.85;
+      const capitalSaved = hoursEliminated * rate;
+
+      outHours.textContent = `${hoursEliminated.toFixed(1)} hrs`;
+      outEuros.textContent = `${symbol}${Math.round(capitalSaved).toLocaleString()}`;
+    }
+
+    [rangeInquiries, rangeTime, rangeRate].forEach(input => input.addEventListener('input', calculateROI));
+
+    // Currency Switcher Buttons
+    const btnEUR = document.getElementById('currEUR');
+    const btnUSD = document.getElementById('currUSD');
+    const btnAED = document.getElementById('currAED');
+
+    function setCurrency(curr, activeBtn) {
+      currentCurrency = curr;
+      [btnEUR, btnUSD, btnAED].forEach(b => {
+        b.className = 'curr-btn px-4 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all';
+      });
+      activeBtn.className = 'curr-btn px-4 py-1.5 rounded-lg font-bold bg-brand-500 text-white transition-all';
+      calculateROI();
+    }
+
+    btnEUR.addEventListener('click', () => setCurrency('EUR', btnEUR));
+    btnUSD.addEventListener('click', () => setCurrency('USD', btnUSD));
+    btnAED.addEventListener('click', () => setCurrency('AED', btnAED));
+
+    calculateROI();
+
+    // FAQ Accordion Logic
+    document.querySelectorAll('.faq-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const card = btn.closest('.faq-card');
+        const answer = card.querySelector('.faq-answer');
+        const arrow = card.querySelector('.faq-arrow');
+        const isCurrentlyHidden = answer.classList.contains('hidden');
+
+        document.querySelectorAll('.faq-answer').forEach(a => a.classList.add('hidden'));
+        document.querySelectorAll('.faq-arrow').forEach(arr => arr.classList.remove('rotate-180'));
+
+        if (isCurrentlyHidden) {
+          answer.classList.remove('hidden');
+          arrow.classList.add('rotate-180');
+        }
+      });
+    });
+
+    // Pipeline Simulator Logic
+    const btnRes = document.getElementById('btnRunRes');
+    const btnComm = document.getElementById('btnRunComm');
+    const consoleBox = document.getElementById('simConsole');
+    const timerBox = document.getElementById('simExecutionTimer');
+
+    const simNodes = [
+      { el: document.getElementById('simNode1'), badge: document.getElementById('badgeNode1') },
+      { el: document.getElementById('simNode2'), badge: document.getElementById('badgeNode2') },
+      { el: document.getElementById('simNode3'), badge: document.getElementById('badgeNode3') },
+      { el: document.getElementById('simNode4'), badge: document.getElementById('badgeNode4') }
+    ];
+
+    function resetSimulator() {
+      simNodes.forEach(n => {
+        n.el.classList.remove('active-node', 'complete-node');
+        n.badge.innerText = 'READY';
+        n.badge.className = 'text-[10px] font-mono text-slate-500 font-bold';
+      });
+    }
+
+    async function executeSimulation(scenario) {
+      btnRes.disabled = true;
+      btnComm.disabled = true;
+      resetSimulator();
+
+      if (scenario === 'residential') {
+        timerBox.innerText = 'Cycle Time: Running...';
+        consoleBox.innerText = `[00.00s] Webhook trigger received (Source: Property Finder / Rightmove / ImmoScout)\n[00.00s] Lead: Tariq Al-Mansoor | Inquiring on: Downtown Luxury 3-Bed Penthouse`;
+        
+        // Node 1
+        simNodes[0].el.classList.add('active-node');
+        simNodes[0].badge.innerText = 'INGESTING';
+        simNodes[0].badge.className = 'text-[10px] font-mono text-brand-400 font-bold';
+        await new Promise(r => setTimeout(r, 600));
+        simNodes[0].el.classList.remove('active-node');
+        simNodes[0].el.classList.add('complete-node');
+        simNodes[0].badge.innerText = 'PASSED';
+        simNodes[0].badge.className = 'text-[10px] font-mono text-emerald-400 font-bold';
+
+        // Node 2
+        consoleBox.innerText += `\n\n[00.65s] Node 02: AI Intent Classifier parsing purchasing power & timeline...\n[00.65s] Extracted: Cash Investor | Budget: $2,400,000 | Readiness: Immediate`;
+        simNodes[1].el.classList.add('active-node');
+        simNodes[1].badge.innerText = 'PARSING';
+        simNodes[1].badge.className = 'text-[10px] font-mono text-brand-400 font-bold';
+        await new Promise(r => setTimeout(r, 750));
+        simNodes[1].el.classList.remove('active-node');
+        simNodes[1].el.classList.add('complete-node');
+        simNodes[1].badge.innerText = 'PASSED';
+        simNodes[1].badge.className = 'text-[10px] font-mono text-emerald-400 font-bold';
+
+        // Node 3
+        consoleBox.innerText += `\n\n[01.40s] Node 03: Criteria Gate [Budget Validated AND Intent = High] -> TRUE\n[01.40s] Automated WhatsApp interactive qualification prompt triggered...`;
+        simNodes[2].el.classList.add('active-node');
+        simNodes[2].badge.innerText = 'EVALUATING';
+        simNodes[2].badge.className = 'text-[10px] font-mono text-brand-400 font-bold';
+        await new Promise(r => setTimeout(r, 550));
+        simNodes[2].el.classList.remove('active-node');
+        simNodes[2].el.classList.add('complete-node');
+        simNodes[2].badge.innerText = 'MATCH';
+        simNodes[2].badge.className = 'text-[10px] font-mono text-emerald-400 font-bold';
+
+        // Node 4
+        consoleBox.innerText += `\n\n[01.95s] Node 04: Calendar viewing slot locked for Thursday 11:00 AM.\n[01.95s] CRM record created & Telegram alert dispatched to Managing Broker.\n[01.95s] Total execution elapsed: 1.95 seconds. Speed-to-lead verified.`;
+        simNodes[3].el.classList.add('active-node');
+        simNodes[3].badge.innerText = 'SYNCING';
+        simNodes[3].badge.className = 'text-[10px] font-mono text-brand-400 font-bold';
+        await new Promise(r => setTimeout(r, 550));
+        simNodes[3].el.classList.remove('active-node');
+        simNodes[3].el.classList.add('complete-node');
+        simNodes[3].badge.innerText = 'COMPLETE';
+        simNodes[3].badge.className = 'text-[10px] font-mono text-emerald-400 font-bold';
+        timerBox.innerText = 'Cycle Time: 1.95s (Complete)';
+
+      } else {
+        timerBox.innerText = 'Cycle Time: Running...';
+        consoleBox.innerText = `[00.00s] IMAP Trigger: Unread Email with 34-Page PDF Attachment detected\n[00.00s] File: "Commercial_MixedUse_Acquisition_Dossier.pdf" (18.6 MB)`;
+        
+        // Node 1
+        simNodes[0].el.classList.add('active-node');
+        simNodes[0].badge.innerText = 'INGESTING';
+        await new Promise(r => setTimeout(r, 600));
+        simNodes[0].el.classList.remove('active-node');
+        simNodes[0].el.classList.add('complete-node');
+        simNodes[0].badge.innerText = 'PASSED';
+
+        // Node 2
+        consoleBox.innerText += `\n\n[00.65s] Node 02: Multi-Page OCR & Pro-Forma Extraction in progress...\n[00.65s] Extracted: GFA / BGF: 14,200 m² | Projected NOI: $1,150,000 | Cap Rate: 7.4%\n[00.65s] Asking Valuation: $15,500,000 | Construction Milestone: 60/40`;
+        simNodes[1].el.classList.add('active-node');
+        simNodes[1].badge.innerText = 'PARSING';
+        await new Promise(r => setTimeout(r, 850));
+        simNodes[1].el.classList.remove('active-node');
+        simNodes[1].el.classList.add('complete-node');
+        simNodes[1].badge.innerText = 'PASSED';
+
+        // Node 3
+        consoleBox.innerText += `\n\n[01.50s] Node 03: Underwriting Gate: [GFA >= 5,000 m² AND Cap Rate >= 6.5%] -> TRUE\n[01.50s] Regulatory Check: Environmental Permits Validated, Title Encumbrance: Clear`;
+        simNodes[2].el.classList.add('active-node');
+        simNodes[2].badge.innerText = 'VALIDATING';
+        await new Promise(r => setTimeout(r, 550));
+        simNodes[2].el.classList.remove('active-node');
+        simNodes[2].el.classList.add('complete-node');
+        simNodes[2].badge.innerText = 'MATCH';
+
+        // Node 4
+        consoleBox.innerText += `\n\n[02.05s] Node 04: Generated 1-Page Investment Memo.\n[02.05s] Deal logged in Notion / Airtable Acquisition Pipeline under "Priority Review".\n[02.05s] Push notification routed to Investment Committee via Telegram.`;
+        simNodes[3].el.classList.add('active-node');
+        simNodes[3].badge.innerText = 'DISPATCHED';
+        await new Promise(r => setTimeout(r, 550));
+        simNodes[3].el.classList.remove('active-node');
+        simNodes[3].el.classList.add('complete-node');
+        simNodes[3].badge.innerText = 'COMPLETE';
+        timerBox.innerText = 'Cycle Time: 2.05s (Complete)';
+      }
+
+      btnRes.disabled = false;
+      btnComm.disabled = false;
+    }
+
+    btnRes.addEventListener('click', () => executeSimulation('residential'));
+    btnComm.addEventListener('click', () => executeSimulation('commercial'));
+
+    // Contact Form Logic
+    document.getElementById('contactForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('fName').value;
+      const email = document.getElementById('fEmail').value;
+      const reg = document.getElementById('fRegion').value;
+      const msg = document.getElementById('fMessage').value;
+
+      const sub = encodeURIComponent(`NovaOps Pipeline Discovery - ${reg}`);
+      const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\nPipeline Category: ${reg}\n\nProject Scope:\n${msg}`);
+
+      document.getElementById('contactSuccess').classList.remove('hidden');
+      window.location.href = `mailto:mudassar@novaop.me?subject=${sub}&body=${body}`;
+    });
+  </script>
+</body>
+</html>
